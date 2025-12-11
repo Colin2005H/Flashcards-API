@@ -34,3 +34,16 @@ export const collectionsTable = sqliteTable('collections',{
     description: text().length(255),
     isPublic: integer('is_public',{ mode: 'boolean' })
 })
+
+export const revisionsTable = sqliteTable('revisions', {
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
+    createdAt: integer('created_at', {mode: 'timestamp'}),
+    reviewedAt: integer('reviewed_at', {mode: 'timestamp'}),
+    level: integer({enum: [1, 2, 3, 4, 5]}).notNull(),
+    userId: text('user_id').primaryKey().references(() => usersTable.id, {
+        onDelete: 'cascade',
+    }),
+    flashcardId: text('flashcard_id').primaryKey().references(() => flashcardsTable.id, {
+        onDelete: 'cascade',
+    }),
+    })
