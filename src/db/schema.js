@@ -1,6 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { RandomUUID } from 'crypto'
-import { timeStamp } from 'console'
+import { randomUUID } from 'crypto'
 
 export const usersTable = sqliteTable('users', {
     id: text().primaryKey().$defaultFn(() => randomUUID()),
