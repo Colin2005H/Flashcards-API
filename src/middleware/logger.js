@@ -1,6 +1,6 @@
 const logger = (req, res, next) => {
     const { method, host } = req
-    const time = new Date().toLocaleTimeString('fr')
+    const time = new Date().toLocaleTimeString('fr-FR')
 
     console.log(`${time} : ${method} - ${host}`)
 
