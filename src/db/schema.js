@@ -6,7 +6,7 @@ import { primaryKey } from 'drizzle-orm/gel-core'
 export const usersTable = sqliteTable('users', {
     id: text().primaryKey().$defaultFn(() => randomUUID()),
     firstName: text('first_name', { length: 31 }).notNull(),
-    lastName: text('last_name', { length: 255 }).notNull(),
+    lastName: text('last_name', { length: 63 }).notNull(),
     email: text().unique().notNull(),
     password: text('password', { length: 255 }).notNull(),
     role: text({enum: ['USER,', 'ADMIN']}).notNull().default('USER'),
