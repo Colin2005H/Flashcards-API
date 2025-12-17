@@ -6,7 +6,7 @@ import { primaryKey } from 'drizzle-orm/gel-core'
 export const usersTable = sqliteTable('users', {
     id: text().primaryKey().$defaultFn(() => randomUUID()),
     firstName: text('first_name', { length: 31 }).notNull(),
-    lastName: text('last_name', { length: 255 }).notNull(),
+    lastName: text('last_name', { length: 63 }).notNull(),
     email: text().unique().notNull(),
     password: text('password', { length: 255 }).notNull(),
     role: text({enum: ['USER,', 'ADMIN']}).notNull().default('USER'),
@@ -14,15 +14,7 @@ export const usersTable = sqliteTable('users', {
     modifiedAt: integer('modified_at', {mode: 'timestamp'})
 })
 
-export const flashcardsTable = sqliteTable('flashcards', {
-    id: text().primaryKey().$defaultFn(() => randomUUID()),
-    frontText: text('front_text', { length: 255 }).notNull(),
-    backText: text('back_text', { length: 255 }).notNull(),
-    frontURL: text('front_url', { length: 255 }),
-    backURL: text('back_url', { length: 255 }),
-    createdAt: integer('created_at', {mode: 'timestamp'}),
-    modifiedAt: integer('modified_at', {mode: 'timestamp'})
-})
+
 
 export const collectionsTable = sqliteTable('collections',{
     id: text().primaryKey().$defaultFn(() => randomUUID()),
@@ -34,6 +26,18 @@ export const collectionsTable = sqliteTable('collections',{
     title: text( { length: 31 }).notNull(),
     description: text({ length: 255 }),
     isPublic: integer('is_public',{ mode: 'boolean' })
+})
+
+export const flashcardsTable = sqliteTable('flashcards', {
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
+    collectionsId: text('collection_id').references(() => collectionsTable.id, {
+    }),
+    frontText: text('front_text', { length: 255 }).notNull(),
+    backText: text('back_text', { length: 255 }).notNull(),
+    frontURL: text('front_url', { length: 255 }),
+    backURL: text('back_url', { length: 255 }),
+    createdAt: integer('created_at', {mode: 'timestamp'}),
+    modifiedAt: integer('modified_at', {mode: 'timestamp'})
 })
 
 export const revisionsTable = sqliteTable('revisions', {

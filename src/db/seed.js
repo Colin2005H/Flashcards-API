@@ -47,8 +47,75 @@ async function seed() {
         ]
         const createdUsers = await db.insert(usersTable).values(seedUsers).returning()
 
+       
+
+        const seedCollections = [
+            {
+                userId: createdUsers[0].id,
+                title: 'Les capitales',
+                description: 'Une collection pour apprendre les capitales',
+                isPublic: 1,
+                createdAt: new Date(),
+                modifiedAt: new Date()
+            },
+
+        ]
+
+         const createdCollections = await db.insert(collectionsTable).values(seedCollections).returning()
+
+         const seedFlashcards = [
+            {
+                collectionsId : createdCollections[0].id,
+                frontText: 'Quelle est la capitale de l\'Espagne ?',
+                backText: 'Madrid',
+                frontURL: '',
+                backURL: '',
+                createdAt: new Date(),
+                modifiedAt: new Date()
+            },
+            {
+                collectionsId : createdCollections[0].id,
+                frontText: 'Quelle est la capitale de la France ?',
+                backText: 'Paris',
+                frontURL: '',
+                backURL: '',
+                createdAt: new Date(),
+                modifiedAt: new Date()
+            },
+            {
+                collectionsId : createdCollections[0].id,
+                frontText: 'Quel est l\'ancien nom de Paris ?',
+                backText: 'Lutèce',
+                frontURL: '',
+                backURL: '',
+                createdAt: new Date(),
+                modifiedAt: new Date()
+            },
+
+        ]
+
+        const createdFlashcards = await db.insert(flashcardsTable).values(seedFlashcards).returning()
+
+       const seedRevisions = [
+            {
+                userId: createdUsers[0].id,
+                flashcardsId : createdFlashcards[0].id,
+                level: 1,
+                createdAt: new Date(),
+                lastRevision: new Date()
+            },
+            {
+                userId: createdUsers[1].id,
+                flashcardsId : createdFlashcards[0].id,
+                level: 2,
+                createdAt: new Date(),
+                lastRevision: new Date()
+            },
+
+        ]
+
+        const createdRevisions = await db.insert(revisionsTable).values(seedRevisions).returning()
         console.log('Seeding completed')
-        
     } catch (error) {
         console.log('Error while seeding the database', error)
     }
