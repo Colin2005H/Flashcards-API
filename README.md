@@ -1,6 +1,6 @@
 # Flashcards-API
 
-This project provide a functionnal API to create flashcards for revision with users profile.
+This project provide a functionnal API to create flashcards for revision linked to users profile.
 
 ## Run Locally
 Clone the project
@@ -50,7 +50,7 @@ To deploy this project run
 #### Create a new account
 
 ```http
-  GET /auth/register
+  POST /auth/register
 ```
 
 | Body        | Type     | Description                          | Constraints                                                         |
@@ -58,13 +58,13 @@ To deploy this project run
 | `firstName` | `string` | **Required**. First name of the user | *Must be at most 31 characters long*                                |
 | `lastName`  | `string` | **Required**. Last name of the user  | *Must be at most 63 characters long*                                |
 | `email`     | `string` | **Required**. email of the user      | *Must be a valid email adress format*                               |
-| `password`  | `string` | **Required**. password of the user   | *Must be at least 8 characters long and at most 63 characters long* |
+| `password`  | `string` | **Required**. Password of the user   | *Must be at least 8 characters long and at most 63 characters long* |
 | `role`      | `string` | *Optionnal*. Role of the user        | *Must be either ADMIN or USER. Will be USER if not provided*        |
 
 #### Login an existing account
 
 ```http
-  GET /auth/login
+  POST /auth/login
 ```
 
 | Body        | Type     | Description                          | Constraints                                                         |
@@ -74,7 +74,95 @@ To deploy this project run
 
 ### Flashcard
 
+#### Create a flashcard
 
+```http
+  POST /flashcards/
+```
+
+| Body           | Type     | Description                                          | Constraints                                     |
+| :------------- | :------- | :--------------------------------------------------- | :---------------------------------------------- |
+| `collectionId` | `string` | **Required**. Id of the collection of the flashcard  | *Must be a UUID*                                |
+| `frontText`    | `string` | **Required**. Text on the front of the flashcard     | *Must be at most 255 characters long*           |
+| `backText`     | `string` | **Required**. Text on the back of the flashcard      | *Must be at most 255 characters long*           |
+| `frontURL`     | `string` | *Optionnal*. URL on the front of the flashcard       | *Must be at most 255 characters long*           |
+| `backURL`      | `string` | *Optionnal*. URL on the back of the flashcard        | *Must be at most 255 characters long*           |
+
+#### Get a flashcard with its id
+
+```http
+  GET /flashcards/:id
+```
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the required flashcard |
+
+#### Update a flashcard informations
+
+```http
+  PUT /flashcards/:id
+```
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the updated flashcard  |
+
+| Body           | Type     | Description                                          | Constraints                                     |
+| :------------- | :------- | :--------------------------------------------------- | :---------------------------------------------- |
+| `collectionId` | `string` | **Required**. Id of the collection of the flashcard  | *Must be a UUID*                                |
+| `frontText`    | `string` | **Required**. Text on the front of the flashcard     | *Must be at most 255 characters long*           |
+| `backText`     | `string` | **Required**. Text on the back of the flashcard      | *Must be at most 255 characters long*           |
+| `frontURL`     | `string` | *Optionnal*. URL on the front of the flashcard       | *Must be at most 255 characters long*           |
+| `backURL`      | `string` | *Optionnal*. URL on the back of the flashcard        | *Must be at most 255 characters long*           |
+
+#### Add a revision to a flashcard
+
+```http
+  POST /flashcards/:id/review
+```
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the updated flashcard  |
+
+| Body           | Type      | Description                          | Constraints               |
+| :------------- | :-------- | :----------------------------------- | :------------------------ |
+| `level`        | `integer` | **Required**. Level of the revision  | *Must be between 1 and 5* |
+
+##### Revision's level detail
+
+| Level | Time between each review |
+| :---- | :----------------------- |
+| 1     | 1 day                    |
+| 2     | 2 days                   |
+| 3     | 4 days                   |
+| 4     | 8 days                   |
+| 5     | 16 days                  |
+
+#### Do a revision of a flashcard
+
+```http
+  PUT /flashcards/:id/review
+```
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the updated flashcard  |
+
+| Body           | Type      | Description                          | Constraints               |
+| :------------- | :-------- | :----------------------------------- | :------------------------ |
+| `level`        | `integer` | *Optionnal*. Level of the revision   | *Must be between 1 and 5* |
+
+#### Delete a flashcard
+
+```http
+  DELETE /:id
+```
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the updated flashcard  |
 
 ### Collection
 
