@@ -52,6 +52,7 @@ To deploy this project run
 ```http
   POST /auth/register
 ```
+![Public Status Badge](https://img.shields.io/badge/connection%20status-public-green?style=flat&logo=bitrise)
 
 | Body        | Type     | Description                          | Constraints                                                         |
 | :---------- | :------- | :----------------------------------- | :------------------------------------------------------------------ |
@@ -66,6 +67,7 @@ To deploy this project run
 ```http
   POST /auth/login
 ```
+![Public Status Badge](https://img.shields.io/badge/connection%20status-public-green?style=flat&logo=bitrise)
 
 | Body        | Type     | Description                          | Constraints                                                         |
 | :---------- | :------- | :----------------------------------- | :------------------------------------------------------------------ |
@@ -79,6 +81,7 @@ To deploy this project run
 ```http
   POST /flashcards/
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 | Body           | Type     | Description                                          | Constraints                                     |
 | :------------- | :------- | :--------------------------------------------------- | :---------------------------------------------- |
@@ -93,6 +96,8 @@ To deploy this project run
 ```http
   GET /flashcards/:id
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
@@ -103,6 +108,7 @@ To deploy this project run
 ```http
   PUT /flashcards/:id
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
@@ -121,6 +127,7 @@ To deploy this project run
 ```http
   POST /flashcards/:id/review
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
@@ -145,6 +152,7 @@ To deploy this project run
 ```http
   PUT /flashcards/:id/review
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
@@ -159,6 +167,7 @@ To deploy this project run
 ```http
   DELETE /:id
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 | Parameter | Type     | Description                                    |
 | :-------- | :------- | :--------------------------------------------- |
