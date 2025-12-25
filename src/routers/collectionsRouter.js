@@ -1,27 +1,43 @@
 import { Router } from 'express'
-import logger from '../middleware/logger.js'
-import { createCollections, getCollection, listFlashcardsFromCollection } from '../controllers/collectionsController.js'
+import { 
+    createCollection, 
+    getCollection, 
+    getMyCollections,
+    searchPublicCollections,
+    updateCollection,
+    deleteCollection,
+    listFlashcardsFromCollection 
+} from '../controllers/collectionsController.js'
 import { validateBody, validateParams } from '../middleware/validation.js'
-import { createCollectionSchema , IdSchema } from '../models/collections.js'
+import { 
+    createCollectionSchema, 
+    updateCollectionSchema,
+    idParamSchema,
+    searchCollectionsSchema 
+} from '../models/collections.js'
 import { authenticateToken } from '../middleware/authenticateToken.js'
 
 const router = Router()
 
-router.post('/create', validateBody(createCollectionSchema), createCollections)
+// Create a new collection (authenticated)
+router.post('/', authenticateToken, validateBody(createCollectionSchema), createCollection)
 
-router.get('/:Id', validateParams(IdSchema), getCollection)
+// Get a collection by ID (public)
+router.get('/:id', validateParams(idParamSchema), getCollection)
 
-router.get('/:Id/flashcards', validateParams(IdSchema), listFlashcardsFromCollection)
-
-router.get('/:Id/to-review', validateParams(IdSchema), getFlashcardsToReview)
-
+// Get my collections (authenticated)
 router.get('/my-collections', authenticateToken, getMyCollections)
 
-router.get('/title/:title', validateParams(IdSchema), getCollectionsByTitle)
+// Search public collections by title (public)
+router.get('/public/:title', searchPublicCollections)
 
-router.put('/:id', authenticateToken, validateParams(IdSchema), updateCollection)
+// List flashcards from a collection (public)
+router.get('/:id/flashcards', validateParams(idParamSchema), listFlashcardsFromCollection)
 
-router.delete('/:id', authenticateToken, validateParams(IdSchema), deleteCollection)
+// Update a collection (authenticated, owner only)
+router.put('/:id', authenticateToken, validateParams(idParamSchema), validateBody(updateCollectionSchema), updateCollection)
 
+// Delete a collection (authenticated, owner only)
+router.delete('/:id', authenticateToken, validateParams(idParamSchema), deleteCollection)
 
 export default router

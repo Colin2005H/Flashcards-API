@@ -1,25 +1,25 @@
 import { db } from "../db/database.js"
 import { collectionsTable, flashcardsTable, revisionsTable } from "../db/schema.js"
-import { eq } from "drizzle-orm"
+import { eq, and, like } from "drizzle-orm"
 import 'dotenv/config'
 
 /**
- * 
+ * Create a new collection
  * @param {request} req 
  * @param {response} res 
- * @returns 
  */
-export const createCollections = async (req, res) => {
-    const { userId, title, description, isPublic } = req.body
+export const createCollection = async (req, res) => {
+    const { title, description, isPublic } = req.body
+    const userId = req.user.userId
 
     try {
         const collection = await db.insert(collectionsTable).values({
-            userId, 
-            title, 
-            description, 
-            isPublic,
-            createdAt: new Date(),
-            modifiedAt: new Date(),
+            userId,
+            title,
+            description: description,
+            isPublic: isPublic,
+            createdAt: Date.now(),
+            modifiedAt: Date.now(),
         }).returning()
 
         res.status(201).json({
@@ -33,14 +33,20 @@ export const createCollections = async (req, res) => {
     }
 }
 
+/**
+ * Get a collection by ID
+ * @param {request} req 
+ * @param {response} res 
+ */
 export const getCollection = async (req, res) => {
     const { id } = req.params
+    const userId = req.user?.userId
 
     try {
         const collection = await db
             .select()
             .from(collectionsTable)
-            .where(eq(collectionsTable.id, id), eq(collectionsTable.isPublic, 1))
+            .where(eq(collectionsTable.id, id))
 
         if (!collection) {
             return res.status(404).json({
@@ -48,7 +54,77 @@ export const getCollection = async (req, res) => {
             })
         }
 
-        res.status(200).json(collection[0])
+        const coll = collection[0]
+
+        // ownership
+        if (!coll.isPublic && (!userId || coll.userId !== userId)) {
+            return res.status(403).json({
+                error: "You do not have access to this collection."
+            })
+        }
+
+        res.status(200).json(coll)
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            error: "Error while fetching the collection"
+        })
+    }
+}
+
+/** * Get my collections
+ * @param {request} req 
+ * @param {response} res 
+ */
+export const getMyCollections = async (req, res) => {
+    const userId = req.user.userId
+
+    try {
+        const collections = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.userId, userId))
+
+        res.status(200).json({
+            message: 'Colections fetched !',
+            count: collections.length,
+            collections
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            error: "Error while fetching the collections."
+        })
+    }
+}
+
+/** * Search public collections by title
+ * @param {request} req 
+ * @param {response} res 
+ */
+export const searchPublicCollections = async (req, res) => {
+    const { title } = req.params
+
+    try {
+        if (!title) {
+            return res.status(400).json({
+                error: "Enter a valid title."
+            })
+        }
+
+        const collections = await db
+            .select()
+            .from(collectionsTable)
+            .where(and(
+                eq(collectionsTable.isPublic, true),
+                like(collectionsTable.title, `%${title}%`)
+            ))
+
+        res.status(200).json({
+            message: 'Search done successfully.',
+            count: collections.length,
+            collections,
+        })
     } catch (error) {
         console.error(error)
         res.status(500).json({
@@ -57,6 +133,10 @@ export const getCollection = async (req, res) => {
     }
 }
 
+/** * List flashcards from a collection
+ * @param {request} req 
+ * @param {response} res 
+ */
 export const listFlashcardsFromCollection = async (req, res) => {
     const { collectionId } = req.params
 
@@ -78,83 +158,96 @@ export const listFlashcardsFromCollection = async (req, res) => {
 }
 
 
-export const getFlashcardsToReview = async (req, res) => {
-    const { collectionId } = req.params
+/**
+ * Update a collection, only available for owner
+ * @param {request} req 
+ * @param {response} res 
+ */
+export const updateCollection = async (req, res) => {
+    const { id } = req.params
+    const userId = req.user.userId
+    const { title, description, isPublic } = req.body
 
     try {
-        const flashcards = await db
+        const collection = await db
             .select()
-            .from(flashcardsTable)
-            .innerJoin(collectionsTable)
-            .innerJoin(revisionsTable)
-            .where(and(eq(collectionsTable.id = collectionId) eq(revisionsTable.reviewedAt <= new Date())))
-    } catch (error) {
-        
-    }
-}
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, id))
 
+        if (collection.length === 0) {
+            return res.status(404).json({
+                error: "Collection not found"
+            })
+        }
 
-export const updateFlashcards = async (req, res) => {
-    const { id } = req.params
-    const { frontText, backText, frontURL, backURL } = req.body
+        if (collection[0].userId !== userId) {
+            return res.status(403).json({
+                error: "Action restricted"
+            })
+        }
 
-    try {
+        const updateData = {}
+        if (title !== undefined) updateData.title = title
+        if (description !== undefined) updateData.description = description
+        if (isPublic !== undefined) updateData.isPublic = isPublic
+        updateData.modifiedAt = Date.now()
+
         const updated = await db
-            .update(flashcardsTable)
-            .set({
-                frontText,
-                backText,
-                frontURL: frontURL,
-                backURL: backURL,
-                modifiedAt: new Date(),
-            })
-            .where(eq(flashcardsTable.id, id))
+            .update(collectionsTable)
+            .set(updateData)
+            .where(eq(collectionsTable.id, id))
             .returning()
 
-        if (!updated) {
-            return res.status(404).json({
-                error: "Flashcard not found.",
-            })
-        }
-
         res.status(200).json({
-            message:'Flashcard updated successfully.',
+            message: 'Collection updated successfully.',
+            collection: updated[0]
         })
     } catch (error) {
         console.error(error)
         res.status(500).json({
-            error: "Error while updating the flashcard.",
+            error: "Error while updating the collection."
         })
     }
 }
 
-export const deleteFlashcards = async (req, res) => {
+/**
+ * Delete a collection, only available for owner
+ * @param {request} req 
+ * @param {response} res 
+ */
+export const deleteCollection = async (req, res) => {
     const { id } = req.params
+    const userId = req.user.userId
 
     try {
-        const deleted = await db
-            .delete(flashcardsTable)
-            .where(eq(flashcardsTable.id, id))
-            .returning()
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, id))
 
-        if (!deleted) {
+        if (collection.length === 0) {
             return res.status(404).json({
-                error: "Flashcard not found.",
+                error: "Collection not found."
             })
         }
 
+        if (collection[0].userId !== userId) {
+            return res.status(403).json({
+                error: "Action restricted."
+            })
+        }
+
+        await db
+            .delete(collectionsTable)
+            .where(eq(collectionsTable.id, id))
+
         res.status(200).json({
-            message:'Flashcard deleted successfully.',
+            message: 'Collection deleted successfully.'
         })
     } catch (error) {
         console.error(error)
         res.status(500).json({
-            error: "Error while deleting the flashcard.",
+            error: "Error while deleting the collection."
         })
     }
-}
-
-export const reviewFlashcard = async (req, res) => {
-    
-
 }
