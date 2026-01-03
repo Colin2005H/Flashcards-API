@@ -48,8 +48,50 @@ export const register = async (req, res) => {
     }
 }
 
-/**
- * 
+/** * Get current user info
+ * @param {request} req 
+ * @param {*} res
+ */
+export const getMe = async (req, res) => {
+    try {
+        const userId = req.user?.userId
+
+        if (!userId) {
+            return res.status(401).json({
+                error: 'Unauthorized'
+            })
+        }
+
+        const [user] = await db.select({
+            id: usersTable.id,
+            email: usersTable.email,
+            firstName: usersTable.firstName,
+            lastName: usersTable.lastName,
+            role: usersTable.role,
+            createdAt: usersTable.createdAt
+        })
+        .from(usersTable)
+        .where(eq(usersTable.id, userId))
+
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found'
+            })
+        }
+
+        res.status(200).json({
+            message: 'User retrieved successfully',
+            userData: user
+        })
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({
+            error: 'Failed to retrieve user'
+        })
+    }
+}
+
+/** * 
  * @param {request} req 
  * @param {*} res
  */
