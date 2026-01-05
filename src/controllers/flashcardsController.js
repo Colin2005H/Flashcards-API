@@ -1,5 +1,5 @@
 import { db } from "../db/database.js"
-import { flashcardsTable } from "../db/schema.js"
+import { flashcardsTable, revisionsTable } from "../db/schema.js"
 import { eq } from "drizzle-orm"
 import 'dotenv/config'
 
@@ -80,7 +80,22 @@ export const listFlashcards = async (req, res) => {
 
 
 export const getFlashcardsToReview = async (req, res) => {
-    
+    const { id } = req.params
+
+    try {
+        const flashcards = await db
+            .select()
+            .from(revisionsTable)
+            .where(eq(revisionsTable.collectionsId, id))
+        res.status(200).json({
+            flashcards,
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            error: "Error while fetching flashcards to review.",
+        })
+    }
 }
 
 
