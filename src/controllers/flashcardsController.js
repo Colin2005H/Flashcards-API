@@ -139,10 +139,11 @@ export const deleteFlashcards = async (req, res) => {
 }
 
 export const getFlashcardsToReview = async (req, res) => {
-    const userId = req.user.userId
+    const userId = req.user?.userId
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' })
     console.log(userId);
     try {
-        flashcardsToReview = [];
+        const flashcardsToReview = [];
         const flashcards = await db
             .select()
             .from(revisionsTable)
@@ -151,14 +152,16 @@ export const getFlashcardsToReview = async (req, res) => {
         for (let i = 0; i < flashcards.length; i++) {
             const level = flashcards[i].level
             let daysToReview = 0
+            console.log(flashcards[i].level);
 
             if (level === 1) daysToReview = 1
             else if (level === 2) daysToReview = 2
             else if (level === 3) daysToReview = 4
             else if (level === 4) daysToReview = 8
             else daysToReview = 16
-
-            if(flashcards[i].lastReviewedAt + daysToReview <= Date.now()){
+            const msToReview = daysToReview * 24 * 60 * 60 * 1000 // convert days to milliseconds
+            const reviewedAtMs = flashcards[i].reviewedAt ? new Date(flashcards[i].reviewedAt).getTime() : 0
+            if (reviewedAtMs + msToReview <= Date.now()) {
                 flashcardsToReview.push(flashcards[i])
             }
         }
@@ -174,15 +177,15 @@ export const getFlashcardsToReview = async (req, res) => {
 }
 
 export const reviewFlashcard = async (req, res) => {
-    const { idFlashcard } = req.params
+    const { id } = req.params
     const userId = req.user.userId
     try {
         const updated = await db
             .update(revisionsTable)
             .set({
-                modifiedAt: new Date(),
+                reviewedAt: new Date(),
             })
-            .where(and(eq(revisionsTable.id, idFlashcard), eq(revisionsTable.userId, userId)))
+            .where(and(eq(revisionsTable.id, id), eq(revisionsTable.userId, userId)))
             .returning()
 
         if (!updated) {
@@ -204,14 +207,15 @@ export const reviewFlashcard = async (req, res) => {
 
 }
 export const AddreviewFlashcard = async (req, res) => {
-    const { flashcardId } = req.params
+    const { id } = req.params
     const { level } = req.body
     const userId = req.user.userId
+    console.log(level);
 
     try {
         const revision = await db.insert(revisionsTable).values({
             userId: userId,
-            flashcardId: flashcardId,
+            flashcardId: id,
             level: level,
             createdAt: new Date(),
             reviewedAt: new Date(),
@@ -229,13 +233,13 @@ export const AddreviewFlashcard = async (req, res) => {
 }
 
 export const deleteReviewFlashcards = async (req, res) => {
-    const { flashcardid } = req.params
+    const { id } = req.params
     const userId = req.user.userId
 
     try {
         const deleted = await db
             .delete(revisionsTable)
-            .where(and(eq(revisionsTable.userId, userId), eq(revisionsTable.flashcardId, flashcardid)))
+            .where(and(eq(revisionsTable.userId, userId), eq(revisionsTable.flashcardId, id)))
             .returning()
 
         if (!deleted) {

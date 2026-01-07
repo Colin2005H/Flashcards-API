@@ -10,10 +10,10 @@ async function seed() {
     try {
         console.log('Database seeding starting...')
         
-        await db.delete(usersTable)
-        await db.delete(revisionsTable)
-        await db.delete(collectionsTable)
-        await db.delete(flashcardsTable)
+        //await db.delete(usersTable)
+        //await db.delete(revisionsTable)
+        //await db.delete(collectionsTable)
+        //await db.delete(flashcardsTable)
 
         const seedUsers = [
             {
@@ -102,14 +102,14 @@ async function seed() {
                 flashcardsId : createdFlashcards[0].id,
                 level: 1,
                 createdAt: new Date(),
-                lastRevision: new Date()
+                reviewedAt: new Date()
             },
             {
                 userId: createdUsers[1].id,
                 flashcardsId : createdFlashcards[0].id,
                 level: 2,
                 createdAt: new Date(),
-                lastRevision: new Date()
+                reviewedAt: new Date()
             },
 
         ]
