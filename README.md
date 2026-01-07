@@ -60,7 +60,7 @@ To deploy this project run
 | `lastName`  | `string` | **Required**. Last name of the user  | *Must be at most 63 characters long*                                |
 | `email`     | `string` | **Required**. email of the user      | *Must be a valid email adress format*                               |
 | `password`  | `string` | **Required**. Password of the user   | *Must be at least 8 characters long and at most 63 characters long* |
-| `role`      | `string` | *Optionnal*. Role of the user        | *Must be either ADMIN or USER. Will be USER if not provided*        |
+| `role`      | `string` | *Optional*. Role of the user         | *Must be either ADMIN or USER. Will be USER if not provided*        |
 
 #### Login an existing account
 
@@ -79,7 +79,7 @@ To deploy this project run
 #### Create a flashcard
 
 ```http
-  POST /flashcards/
+  POST /flashcard/
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
@@ -88,13 +88,13 @@ To deploy this project run
 | `collectionId` | `string` | **Required**. Id of the collection of the flashcard  | *Must be a UUID*                                |
 | `frontText`    | `string` | **Required**. Text on the front of the flashcard     | *Must be at most 255 characters long*           |
 | `backText`     | `string` | **Required**. Text on the back of the flashcard      | *Must be at most 255 characters long*           |
-| `frontURL`     | `string` | *Optionnal*. URL on the front of the flashcard       | *Must be at most 255 characters long*           |
-| `backURL`      | `string` | *Optionnal*. URL on the back of the flashcard        | *Must be at most 255 characters long*           |
+| `frontURL`     | `string` | *Optional*. URL on the front of the flashcard        | *Must be at most 255 characters long*           |
+| `backURL`      | `string` | *Optional*. URL on the back of the flashcard         | *Must be at most 255 characters long*           |
 
-#### Get a flashcard with its id
+#### Get a flashcard by ID
 
 ```http
-  GET /flashcards/:id
+  GET /flashcard/:id
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 ![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
@@ -103,10 +103,10 @@ To deploy this project run
 | :-------- | :------- | :--------------------------------------------- |
 | `id`      | `string` | **Required**. The id of the required flashcard |
 
-#### Update a flashcard informations
+#### Update a flashcard informations (must be aflashcard that you created)
 
 ```http
-  PUT /flashcards/:id
+  PUT /flashcard/:id
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
@@ -119,13 +119,24 @@ To deploy this project run
 | `collectionId` | `string` | **Required**. Id of the collection of the flashcard  | *Must be a UUID*                                |
 | `frontText`    | `string` | **Required**. Text on the front of the flashcard     | *Must be at most 255 characters long*           |
 | `backText`     | `string` | **Required**. Text on the back of the flashcard      | *Must be at most 255 characters long*           |
-| `frontURL`     | `string` | *Optionnal*. URL on the front of the flashcard       | *Must be at most 255 characters long*           |
-| `backURL`      | `string` | *Optionnal*. URL on the back of the flashcard        | *Must be at most 255 characters long*           |
+| `frontURL`     | `string` | *Optional*. URL on the front of the flashcard        | *Must be at most 255 characters long*           |
+| `backURL`      | `string` | *Optional*. URL on the back of the flashcard         | *Must be at most 255 characters long*           |
+
+#### Delete a flashcard (must be a flashcard that you created)
+
+```http
+  DELETE flashcard/:id
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                    |
+| :-------- | :------- | :--------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the updated flashcard  |
 
 #### Add a revision to a flashcard
 
 ```http
-  POST /flashcards/:id/review
+  POST /flashcard/:id/review
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
@@ -150,7 +161,7 @@ To deploy this project run
 #### Do a revision of a flashcard
 
 ```http
-  PUT /flashcards/:id/review
+  PUT /flashcard/:id/review
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
@@ -160,20 +171,91 @@ To deploy this project run
 
 | Body           | Type      | Description                          | Constraints               |
 | :------------- | :-------- | :----------------------------------- | :------------------------ |
-| `level`        | `integer` | *Optionnal*. Level of the revision   | *Must be between 1 and 5* |
+| `level`        | `integer` | *Optional*. Level of the revision   | *Must be between 1 and 5* |
 
-#### Delete a flashcard
+### Collection
+
+#### Create a new collection
 
 ```http
-  DELETE /:id
+  POST /collection/
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
-| Parameter | Type     | Description                                    |
-| :-------- | :------- | :--------------------------------------------- |
-| `id`      | `string` | **Required**. The id of the updated flashcard  |
+| Body          | Type      | Description                                   | Constraints                           |
+| :------------ | :-------- | :-------------------------------------------- | :------------------------------------ |
+| `title`       | `string`  | **Required**. The title of the collection     | *Must be at most 100 characters long* |
+| `description` | `string`  | *Optional*. The description of the collection | *Must be at most 500 characters long* |
+| `isPublic`    | `boolean` | *Optional*. If the collection is public       | *False by default*                    |
 
-### Collection
+#### Get a collection by ID (must be either a public collection or a collection that you created)
+
+```http
+  GET /collection/:id
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                        |
+| :-------- | :------- | :------------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the collection to retrieve |
+
+#### List the flashcards of a collection  (must be either a public collection or a collection that you created)
+
+```http
+  GET /collection/:id/flashcards
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                                                      |
+| :-------- | :------- | :------------------------------------------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the collection in which the flashcards are retrieved |
+
+#### Update a collection informations (must be a collection that you created)
+
+```http
+  PUT /collection/:id
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                      |
+| :-------- | :------- | :----------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the collection to update |
+
+| Body          | Type      | Description                                   | Constraints                           |
+| :------------ | :-------- | :-------------------------------------------- | :------------------------------------ |
+| `title`       | `string`  | **Required**. The title of the collection     | *Must be at most 100 characters long* |
+| `description` | `string`  | *Optional*. The description of the collection | *Must be at most 500 characters long* |
+| `isPublic`    | `boolean` | *Optional*. If the collection is public       | *False by default*                    |
+
+#### Delete a collection by ID (must be a collection that you created)
+
+```http
+  GET /collection/:id
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                      |
+| :-------- | :------- | :----------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the collection to delete |
+
+#### List all the collections that you own
+
+```http
+  GET /collection/my-collections
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+#### Search public collections by their title
+
+```http
+  GET /collection/public/:title
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                      | Constraints                           |
+| :-------- | :------- | :------------------------------- | :------------------------------------ |
+| `title`   | `string` | **Required**. The title searched | *Must be at most 100 characters long* |
 
 #### Template
 
@@ -181,9 +263,9 @@ To deploy this project run
   GET /
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `example` | `string` | **Required**. Your example |
+| Parameter | Type     | Description                | Constraints      |
+| :-------- | :------- | :------------------------- | :--------------- |
+| `example` | `string` | **Required**. Your example | *Must be a UUID* |
 
 ## Authors
 - @[AstatePNG](https://github.com/AstatePNG)
@@ -192,4 +274,4 @@ To deploy this project run
 
 ## Database model
 
-![Entity-relashionship diagram of the database](https://media.discordapp.net/attachments/1243257506629685359/1451119074460569600/image.png?ex=69450373&is=6943b1f3&hm=c9e753b44b7a966a6589bc460d1c0c8b8d30aea4633d27fa0296fa66b39d0df2&=&format=webp&quality=lossless)
+![Entity-relashionship diagram of the database](https://cdn.discordapp.com/attachments/1243257506629685359/1451119074460569600/image.png?ex=695f6173&is=695e0ff3&hm=05c991fb2b62a31c7d797dac6e1b765cb881bc5a2c85076ce3faf6d162cefc0c&)
