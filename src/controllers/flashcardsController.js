@@ -1,5 +1,5 @@
 import { db } from "../db/database.js"
-import { flashcardsTable, revisionsTable } from "../db/schema.js"
+import { collectionsTable, flashcardsTable, revisionsTable } from "../db/schema.js"
 import { and, eq } from "drizzle-orm"
 import 'dotenv/config'
 
@@ -206,13 +206,37 @@ export const reviewFlashcard = async (req, res) => {
 
 
 }
-export const AddreviewFlashcard = async (req, res) => {
+export const addReviewFlashcard = async (req, res) => {
     const { id } = req.params
     const { level } = req.body
     const userId = req.user.userId
     console.log(level);
 
     try {
+        const flashcard = await db
+            .select()
+            .from(flashcardsTable)
+            .where(eq(flashcardsTable.id, id))
+
+        if (!flashcard || flashcard.length === 0) {
+            return res.status(404).json({
+                error: "Flashcard not found.",
+            })
+        }
+
+        const flashcardObj = flashcard[0]
+
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(and(eq(collectionsTable.id, flashcardObj.collectionsId), eq(collectionsTable.isPublic, 1)))
+
+        if (!collection || collection.length === 0) {
+            return res.status(404).json({
+                error: "Collection not found or not public.",
+            })
+        }
+
         const revision = await db.insert(revisionsTable).values({
             userId: userId,
             flashcardId: id,

@@ -15,7 +15,7 @@ import {
     deleteFlashcards, 
     updateFlashcards,
     reviewFlashcard,
-    AddreviewFlashcard,
+    addReviewFlashcard,
     deleteReviewFlashcards
 } from '../controllers/flashcardsController.js'
 
@@ -39,7 +39,7 @@ router.put('/:id', validateParams(flashcardIdSchema), validateBody(flashcardBody
 router.put('/review/:id', authenticateToken,validateParams(flashcardIdSchema), reviewFlashcard)
 
 // Add a review to a flashcard
-router.post('/:id/review', authenticateToken, validateParams(flashcardIdSchema), validateBody(reviewBodySchema), AddreviewFlashcard)
+router.post('/:id/review', authenticateToken, validateParams(flashcardIdSchema), validateBody(reviewBodySchema), addReviewFlashcard)
 
 // Delete a Reviewflashcard 
 router.delete('/review/:id', authenticateToken, validateParams(flashcardIdSchema), deleteReviewFlashcards)
