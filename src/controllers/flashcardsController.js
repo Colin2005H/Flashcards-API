@@ -176,6 +176,7 @@ export const getFlashcardsToReview = async (req, res) => {
     }
 }
 
+// Je ne comprends pas pourquoi le niveau d'une carte changerait si on la révise
 export const reviewFlashcard = async (req, res) => {
     const { id } = req.params
     const userId = req.user.userId
@@ -234,6 +235,12 @@ export const addReviewFlashcard = async (req, res) => {
         if (!collection || collection.length === 0) {
             return res.status(404).json({
                 error: "Collection not found or not public.",
+            })
+        }
+
+        if (level < 1 || level > 5) {
+            return res.status(400).json({
+                error: "Level must be between 1 and 5.",
             })
         }
 
