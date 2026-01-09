@@ -16,5 +16,5 @@ export const loginSchema = z.object({
 })
 
 export const userIdSchema = z.object({
-    id: z.uuid()
+    userId: z.string().uuid('Invalid user ID format')
 })
