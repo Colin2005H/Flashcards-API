@@ -10,10 +10,10 @@ async function seed() {
     try {
         console.log('Database seeding starting...')
         
-        //await db.delete(usersTable)
-        //await db.delete(revisionsTable)
-        //await db.delete(collectionsTable)
-        //await db.delete(flashcardsTable)
+        await db.delete(usersTable)
+        await db.delete(revisionsTable)
+        await db.delete(collectionsTable)
+        await db.delete(flashcardsTable)
 
         const seedUsers = [
             {
