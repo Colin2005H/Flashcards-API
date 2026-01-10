@@ -24,7 +24,7 @@ const router = Router()
 router.post('/', authenticateToken, validateBody(flashcardBodySchema), createFlashcards)
 
 // Get a flashcard by ID
-router.get('/:id', validateParams(flashcardIdSchema), getFlashcard)
+router.get('/:id', authenticateToken, validateParams(flashcardIdSchema), getFlashcard)
 
 // Update a flashcard
 router.put('/:id', authenticateToken, validateParams(flashcardIdSchema), validateBody(flashcardBodySchema), updateFlashcards)
