@@ -7,7 +7,7 @@ export const flashcardBodySchema = z.object({
     backText: z.string()
     .min(1, 'back text is required')
     .max(255, 'back text is too large'),
-    collectionId: z.string(), //A verifier dans la doc pour comment faire des'assurer que c'est un UUID
+    collectionId: z.string(), 
     frontURL: z.string().max(255, 'front URL is too large'),
     backURL: z.string().max(255, 'back URL is too large')
 })
@@ -17,7 +17,7 @@ export const flashcardIdSchema = z.object({
 })
 
 export const collectionIdSchema = z.object({
-    
+    collectionId: z.string().uuid()
 })
 
 export const reviewBodySchema = z.object({
@@ -26,3 +26,4 @@ export const reviewBodySchema = z.object({
         .min(1, 'level must be at least 1')
         .max(5, 'level must be at most 5')
 })
+

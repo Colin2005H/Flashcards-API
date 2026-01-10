@@ -13,7 +13,6 @@ import {
     createCollectionSchema, 
     updateCollectionSchema,
     idParamSchema,
-    searchCollectionsSchema 
 } from '../models/collections.js'
 import { authenticateToken } from '../middleware/authenticateToken.js'
 

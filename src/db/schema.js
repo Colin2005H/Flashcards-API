@@ -1,6 +1,5 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'crypto'
-import { primaryKey } from 'drizzle-orm/gel-core'
 
 
 export const usersTable = sqliteTable('users', {
@@ -9,7 +8,7 @@ export const usersTable = sqliteTable('users', {
     lastName: text('last_name', { length: 63 }).notNull(),
     email: text().unique().notNull(),
     password: text('password', { length: 255 }).notNull(),
-    role: text({enum: ['USER,', 'ADMIN']}).notNull().default('USER'),
+    role: text({enum: ['USER', 'ADMIN']}).notNull().default('USER'),
     createdAt: integer('created_at', {mode: 'timestamp'}),
     modifiedAt: integer('modified_at', {mode: 'timestamp'})
 })
@@ -41,16 +40,16 @@ export const flashcardsTable = sqliteTable('flashcards', {
 })
 
 export const revisionsTable = sqliteTable('revisions', {
-    id: text().$defaultFn(() => randomUUID()),
-    createdAt: integer('created_at', {mode: 'timestamp'}),
+    id: text().primaryKey().$defaultFn(() => randomUUID()),
+        createdAt: integer('created_at', {mode: 'timestamp'}),
     reviewedAt: integer('reviewed_at', {mode: 'timestamp'}),
-    level: integer({enum: [1, 2, 3, 4, 5]}).notNull(),
-    userId: text('user_id').references(() => usersTable.id, {
+    level: integer({enum: [1, 2, 3, 4, 5]}).notNull().default(1),
+    userId: text('user_id').notNull().references(() => usersTable.id, {
         onDelete: 'cascade',
     }),
-    flashcardId: text('flashcard_id').references(() => flashcardsTable.id, {
+    flashcardId: text('flashcard_id').notNull().references(() => flashcardsTable.id, {
         onDelete: 'cascade',
-    }, (table) => [
+}, (table) => [
         primaryKey({ columns: [table.id, table.userId, table.flashcard_id]})
     ]),
 });

@@ -139,14 +139,35 @@ export const searchPublicCollections = async (req, res) => {
  */
 export const listFlashcardsFromCollection = async (req, res) => {
     const { collectionId } = req.params
+    const userId = req.user.userId
 
     try {
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, collectionId))
+
+        if (!collection || collection.length === 0) {
+            return res.status(404).json({
+                error: "Collection not found.",
+            })
+        }
+
+        const coll = collection[0]
+        if (!coll.isPublic && (!userId || coll.userId !== userId)) {
+            return res.status(403).json({
+                error: "Permission denied."
+            })
+        }
+
         const flashcards = await db
             .select()
             .from(flashcardsTable)
             .where(eq(flashcardsTable.collectionsId, collectionId))
 
         res.status(200).json({
+            message: 'Flashcards retrieved successfully',
+            count: flashcards.length,
             flashcards,
         })
     } catch (error) {
