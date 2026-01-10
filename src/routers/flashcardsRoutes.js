@@ -36,7 +36,7 @@ router.put('/review/:id', authenticateToken,validateParams(flashcardIdSchema), r
 router.post('/:id/review', authenticateToken, validateParams(flashcardIdSchema), validateBody(reviewBodySchema), addReviewFlashcard)
 
 // Delete a Reviewflashcard 
-router.delete('/review/:id', authenticateToken, validateParams(flashcardIdSchema), deleteReviewFlashcards)
+router.delete('/:id/review', authenticateToken, validateParams(flashcardIdSchema), deleteReviewFlashcards)
 
 // Delete a flashcard
 router.delete('/:id', authenticateToken, validateParams(flashcardIdSchema), deleteFlashcards)
