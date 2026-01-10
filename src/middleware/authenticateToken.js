@@ -1,6 +1,7 @@
 import { request } from "express"
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
+
 /**
  * 
  * @param {request} req 
@@ -14,11 +15,12 @@ export const authenticateToken = (req, res, next) => {
         if(!token){
             return res.status(401).json({error: 'Token is required'})
         }
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decodedToken.userId
-    req.user = { userId }
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        const userId = decodedToken.userId
+        const userRole = decodedToken.userRole
+        req.user = { userId, userRole }
 
-    next()
+        next()
     } catch (error) {
         return res.status(401).json({error: 'Invalid Token'})
     }

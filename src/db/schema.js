@@ -18,14 +18,14 @@ export const usersTable = sqliteTable('users', {
 
 export const collectionsTable = sqliteTable('collections',{
     id: text().primaryKey().$defaultFn(() => randomUUID()),
-    userId: text('user_id').references(() => usersTable.id, {
+    userId: text('user_id').notNull().references(() => usersTable.id, {
         onDelete: 'cascade',
     }),
-    createdAt: integer('created_at', {mode: 'timestamp'}),
-    modifiedAt: integer('modified_at', {mode: 'timestamp'}),
+    createdAt: integer('created_at', {mode: 'timestamp'}).$defaultFn(() => Date.now()),
+    modifiedAt: integer('modified_at', {mode: 'timestamp'}).$defaultFn(() => Date.now()),
     title: text( { length: 31 }).notNull(),
     description: text({ length: 255 }),
-    isPublic: integer('is_public',{ mode: 'boolean' })
+    isPublic: integer('is_public',{ mode: 'boolean' }).notNull().default(false)
 })
 
 export const flashcardsTable = sqliteTable('flashcards', {
