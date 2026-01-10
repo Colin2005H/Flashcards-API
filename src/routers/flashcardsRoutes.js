@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { authenticateToken } from '../middleware/authenticateToken.js'
 import { validateBody, validateParams } from '../middleware/validation.js'
 import { 
     flashcardBodySchema, 
@@ -14,6 +15,8 @@ import {
     deleteFlashcards, 
     updateFlashcards,
     reviewFlashcard,
+    addReviewFlashcard,
+    deleteReviewFlashcards
 } from '../controllers/flashcardsController.js'
 
 const router = Router()
@@ -24,15 +27,22 @@ router.post('/', validateBody(flashcardBodySchema), createFlashcards)
 // Get a flashcard by ID
 router.get('/:id', validateParams(flashcardIdSchema), getFlashcard)
 
-//router.get('/collection/:collectionId', validateParams(collectionIdSchema), listFlashcards)
+// Get flashcards to review 
+router.get('/collection/to-review', authenticateToken, getFlashcardsToReview)
 
-//router.get('/collection/:collectionId/to-review', validateParams(collectionIdSchema), getFlashcardsToReview)
+router.get('/collection/:collectionId', validateParams(collectionIdSchema), listFlashcards)
 
 // Update a flashcard
 router.put('/:id', validateParams(flashcardIdSchema), validateBody(flashcardBodySchema), updateFlashcards)
 
+// Update a flashcard review
+router.put('/review/:id', authenticateToken,validateParams(flashcardIdSchema), reviewFlashcard)
+
 // Add a review to a flashcard
-router.post('/:id/review', validateParams(flashcardIdSchema), validateBody(reviewBodySchema), reviewFlashcard)
+router.post('/:id/review', authenticateToken, validateParams(flashcardIdSchema), validateBody(reviewBodySchema), addReviewFlashcard)
+
+// Delete a Reviewflashcard 
+router.delete('/review/:id', authenticateToken, validateParams(flashcardIdSchema), deleteReviewFlashcards)
 
 // Delete a flashcard
 router.delete('/:id', validateParams(flashcardIdSchema), deleteFlashcards)

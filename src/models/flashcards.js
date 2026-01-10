@@ -21,5 +21,8 @@ export const collectionIdSchema = z.object({
 })
 
 export const reviewBodySchema = z.object({
-    
+    level: z.number()
+        .int()
+        .min(1, 'level must be at least 1')
+        .max(5, 'level must be at most 5')
 })
