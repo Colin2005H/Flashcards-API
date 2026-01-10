@@ -146,9 +146,9 @@ To deploy this project run
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
-| Parameter | Type     | Description                                    |
-| :-------- | :------- | :--------------------------------------------- |
-| `id`      | `string` | **Required**. The id of the updated flashcard  |
+| Parameter | Type     | Description                                     |
+| :-------- | :------- | :---------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the reviewed flashcard  |
 
 | Body           | Type      | Description                          | Constraints               |
 | :------------- | :-------- | :----------------------------------- | :------------------------ |
@@ -171,13 +171,24 @@ To deploy this project run
 ```
 ![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
-| Parameter | Type     | Description                                    |
-| :-------- | :------- | :--------------------------------------------- |
-| `id`      | `string` | **Required**. The id of the updated flashcard  |
+| Parameter | Type     | Description                                     |
+| :-------- | :------- | :---------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the flashcard reviewed  |
 
 | Body           | Type      | Description                          | Constraints               |
 | :------------- | :-------- | :----------------------------------- | :------------------------ |
-| `level`        | `integer` | *Optional*. Level of the revision   | *Must be between 1 and 5* |
+| `level`        | `integer` | *Optional*. Level of the revision    | *Must be between 1 and 5* |
+
+#### Delete a revision on a flashcard
+
+```http
+  DELETE /flashcard/:id/review
+```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
+
+| Parameter | Type     | Description                                     |
+| :-------- | :------- | :---------------------------------------------- |
+| `id`      | `string` | **Required**. The id of the reviewed flashcard  |
 
 ### Collection
 
