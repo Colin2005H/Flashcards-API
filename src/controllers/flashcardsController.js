@@ -83,7 +83,7 @@ export const getFlashcard = async (req, res) => {
 
         if (!collection) {
             return res.status(404).json({
-                error: "Collection not foiund.",
+                error: "Collection not found.",
             })
         }
 
