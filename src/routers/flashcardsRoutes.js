@@ -22,18 +22,13 @@ import {
 const router = Router()
 
 // Create a flashcard
-router.post('/', validateBody(flashcardBodySchema), createFlashcards)
+router.post('/', authenticateToken, validateBody(flashcardBodySchema), createFlashcards)
 
 // Get a flashcard by ID
 router.get('/:id', validateParams(flashcardIdSchema), getFlashcard)
 
-// Get flashcards to review 
-router.get('/collection/to-review', authenticateToken, getFlashcardsToReview)
-
-router.get('/collection/:collectionId', validateParams(collectionIdSchema), listFlashcards)
-
 // Update a flashcard
-router.put('/:id', validateParams(flashcardIdSchema), validateBody(flashcardBodySchema), updateFlashcards)
+router.put('/:id', authenticateToken, validateParams(flashcardIdSchema), validateBody(flashcardBodySchema), updateFlashcards)
 
 // Update a flashcard review
 router.put('/review/:id', authenticateToken,validateParams(flashcardIdSchema), reviewFlashcard)
@@ -45,6 +40,6 @@ router.post('/:id/review', authenticateToken, validateParams(flashcardIdSchema),
 router.delete('/review/:id', authenticateToken, validateParams(flashcardIdSchema), deleteReviewFlashcards)
 
 // Delete a flashcard
-router.delete('/:id', validateParams(flashcardIdSchema), deleteFlashcards)
+router.delete('/:id', authenticateToken, validateParams(flashcardIdSchema), deleteFlashcards)
 
 export default router

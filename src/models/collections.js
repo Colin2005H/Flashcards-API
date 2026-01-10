@@ -16,7 +16,8 @@ export const updateCollectionSchema = z.object({
         .max(100, 'The title must be at most 100 characters long')
         .optional(),
     description: z.string()
-        .max(500, 'The description must be at most 500 characters long'),
+        .max(500, 'The description must be at most 500 characters long')
+        .optional(),
     isPublic: z.boolean()
 })
 

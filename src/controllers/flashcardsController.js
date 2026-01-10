@@ -11,20 +11,45 @@ import 'dotenv/config'
  */
 export const createFlashcards = async (req, res) => {
     const { frontText, backText, collectionId, frontURL, backURL } = req.body
+    const userId = req.user.userId
 
     try {
+        if (!userId){
+            return res.status(401).json({
+                error: 'You have to be logged in to add flashcards.'
+            })
+        }
+
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id,collectionId))
+
+        if (!collection){
+            return res.status(404).json({
+                error: 'Collection not found'
+            })
+        }
+
+        if(collection[0].userId !== userId) {
+            return res.status(403).json({
+                error: 'Permission denied.'
+            })
+        }
+
         const flashcard = await db.insert(flashcardsTable).values({
             frontText,
             backText,
             collectionsId: collectionId,
-            frontURL: frontURL,
-            backURL: backURL,
+            frontURL: frontURL || null,
+            backURL: backURL || null,
             createdAt: new Date(),
             modifiedAt: new Date(),
         }).returning()
 
         res.status(201).json({
             message:'Flashcard added successfully.',
+            flashcard: flashcard[0]
         })
     } catch (error) {
         console.error(error)
@@ -36,6 +61,7 @@ export const createFlashcards = async (req, res) => {
 
 export const getFlashcard = async (req, res) => {
     const { id } = req.params
+    const userId = req.user.userId
 
     try {
         const flashcard = await db
@@ -49,7 +75,26 @@ export const getFlashcard = async (req, res) => {
             })
         }
 
-        res.status(200).json(flashcard[0])
+        const fc = flashcard[0]
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, fc.collectionsId))
+
+        if (!collection) {
+            return res.status(404).json({
+                error: "Collection not foiund.",
+            })
+        }
+
+        const coll = collection[0]
+        if (!coll.isPublic && (!userId || coll.userId !== userId)) {
+            return res.status(403).json({
+                error: "Permission denied."
+            })
+        }
+
+        res.status(200).json(fc)
     } catch (error) {
         console.error(error)
         res.status(500).json({
@@ -80,9 +125,44 @@ export const listFlashcards = async (req, res) => {
 
 export const updateFlashcards = async (req, res) => {
     const { id } = req.params
+    const userId = req.user.userId
     const { frontText, backText, frontURL, backURL } = req.body
 
     try {
+        if (!userId) {
+            return res.status(401).json({
+                error: 'You have to be logged in to update flashcards.'
+            })
+        }
+
+        const flashcard = await db
+            .select()
+            .from(flashcardsTable)
+            .where(eq(flashcardsTable.id, id))
+
+        if (!flashcard) {
+            return res.status(404).json({
+                error: "Flashcard not found.",
+            })
+        }
+
+        const collection = await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, flashcard[0].collectionsId))
+
+        if (!collection || collection.length === 0) {
+            return res.status(404).json({
+                error: "Collection not found.",
+            })
+        }
+
+        if (collection[0].userId !== userId) {
+            return res.status(403).json({
+                error: "Permission denied."
+            })
+        }
+
         const updated = await db
             .update(flashcardsTable)
             .set({
@@ -94,12 +174,6 @@ export const updateFlashcards = async (req, res) => {
             })
             .where(eq(flashcardsTable.id, id))
             .returning()
-
-        if (!updated) {
-            return res.status(404).json({
-                error: "Flashcard not found.",
-            })
-        }
 
         res.status(200).json({
             message:'Flashcard updated successfully.',
@@ -114,18 +188,47 @@ export const updateFlashcards = async (req, res) => {
 
 export const deleteFlashcards = async (req, res) => {
     const { id } = req.params
+    const userId = req.user.userId
 
     try {
-        const deleted = await db
-            .delete(flashcardsTable)
-            .where(eq(flashcardsTable.id, id))
-            .returning()
+        if(!userId) {
+            return res.status(401).json({
+                error: 'You have to be logged in to delete flashcards.'
+            })
+        }
 
-        if (!deleted) {
+        const flashcard = await db
+            .select()
+            .from(flashcardsTable)
+            .where(eq(flashcardsTable.id, id))
+
+        if (!flashcard) {
             return res.status(404).json({
                 error: "Flashcard not found.",
             })
         }
+
+        const collection =await db
+            .select()
+            .from(collectionsTable)
+            .where(eq(collectionsTable.id, flashcard[0].collectionsId))
+
+        if (!collection || collection.length === 0){
+            return res.status(404).json({
+                error: "Colection not found.",
+            })
+        }
+
+        if (collection[0].userId !== userId) {
+            return res.status(403).json({
+                error:"Permission denied."
+            })
+        }
+
+        const deleted = await db
+            .delete(flashcardsTable)
+            .where(eq(flashcardsTable.id, id))
+            .returning()
 
         res.status(200).json({
             message:'Flashcard deleted successfully.',
@@ -289,3 +392,4 @@ export const deleteReviewFlashcards = async (req, res) => {
         })
     }
 }
+
