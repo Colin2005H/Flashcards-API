@@ -8,6 +8,6 @@ const router = Router()
 
 router.post('/register', validateBody(userSchema), register)
 router.post('/login', validateBody(loginSchema), login)
-router.get('/me', authenticateToken, getMe)
+router.get('/info', authenticateToken, getMe)
 
 export default router
