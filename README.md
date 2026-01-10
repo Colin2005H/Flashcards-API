@@ -217,7 +217,7 @@ To deploy this project run
 | :-------- | :------- | :------------------------------------------------------------------------------- |
 | `id`      | `string` | **Required**. The id of the collection in which the flashcards are retrieved |
 
-#### Update a collection informations (must be a collection that you created)
+#### Update collection informations (must be a collection that you created)
 
 ```http
   PUT /collection/:id
