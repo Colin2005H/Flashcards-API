@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt'
 import { db } from './database.js'
 import { usersTable, revisionsTable, collectionsTable, flashcardsTable } from './schema.js'
-import { date } from 'drizzle-orm/mysql-core'
 
 /**
  * 

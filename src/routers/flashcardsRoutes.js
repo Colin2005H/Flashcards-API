@@ -4,7 +4,6 @@ import { validateBody, validateParams } from '../middleware/validation.js'
 import { 
     flashcardBodySchema, 
     flashcardIdSchema, 
-    collectionIdSchema,
     reviewBodySchema 
 } from '../models/flashcards.js'
 import { 
