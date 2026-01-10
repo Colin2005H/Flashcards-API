@@ -77,8 +77,9 @@ To deploy this project run
 #### Get information about the account currently logged-in
 
 ```http
-  POST /auth/info
+  GET /auth/info
 ```
+![Connected Status Badge](https://img.shields.io/badge/connection%20status-connected-blue?style=flat&logo=bitrise)
 
 ### Flashcard
 
