@@ -60,7 +60,7 @@ To deploy this project run
 | `lastName`  | `string` | **Required**. Last name of the user  | *Must be at most 63 characters long*                                |
 | `email`     | `string` | **Required**. email of the user      | *Must be a valid email adress format*                               |
 | `password`  | `string` | **Required**. Password of the user   | *Must be at least 8 characters long and at most 63 characters long* |
-| `role`      | `string` | *Optional*. Role of the user         | *Must be either ADMIN or USER. Will be USER if not provided*        |
+| `role`      | `string` | *Optional*. Role of the user         | *Must be either ADMIN or USER. Will be USER by default*             |
 
 #### Login an existing account
 
@@ -73,6 +73,12 @@ To deploy this project run
 | :---------- | :------- | :----------------------------------- | :------------------------------------------------------------------ |
 | `email`     | `string` | **Required**. email of the user      | *Must be a valid email adress format*                               |
 | `password`  | `string` | **Required**. password of the user   | *Must be at least 8 characters long and at most 63 characters long* |
+
+#### Get information about the account currently logged-in
+
+```http
+  POST /auth/info
+```
 
 ### Flashcard
 
@@ -91,7 +97,7 @@ To deploy this project run
 | `frontURL`     | `string` | *Optional*. URL on the front of the flashcard        | *Must be at most 255 characters long*           |
 | `backURL`      | `string` | *Optional*. URL on the back of the flashcard         | *Must be at most 255 characters long*           |
 
-#### Get a flashcard by ID
+#### Get a flashcard by its ID
 
 ```http
   GET /flashcard/:id
@@ -103,7 +109,7 @@ To deploy this project run
 | :-------- | :------- | :--------------------------------------------- |
 | `id`      | `string` | **Required**. The id of the required flashcard |
 
-#### Update a flashcard informations (must be aflashcard that you created)
+#### Update a flashcard informations (must be a flashcard that you created)
 
 ```http
   PUT /flashcard/:id
@@ -257,15 +263,36 @@ To deploy this project run
 | :-------- | :------- | :------------------------------- | :------------------------------------ |
 | `title`   | `string` | **Required**. The title searched | *Must be at most 100 characters long* |
 
-#### Template
+### Administration
+
+#### List all users
+![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
 
 ```http
-  GET /
+  GET /admin/users
 ```
 
-| Parameter | Type     | Description                | Constraints      |
-| :-------- | :------- | :------------------------- | :--------------- |
-| `example` | `string` | **Required**. Your example | *Must be a UUID* |
+#### Get information about a specified user through their ID
+![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
+
+```http
+  GET /admin/users/:userId
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `userId`  | `string` | **Required**. The user ID  |
+
+#### Delete a user and all their related data
+![Admin Status Badge](https://img.shields.io/badge/connection%20status-admin-red?style=flat&logo=bitrise)
+
+```http
+  DELETE /admin/users/:userId
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `userId`  | `string` | **Required**. The user ID  |
 
 ## Authors
 - @[AstatePNG](https://github.com/AstatePNG)
