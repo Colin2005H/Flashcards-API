@@ -13,8 +13,8 @@ app.use(express.json())
 app.use(logger)
 
 app.use('/auth', authRouter)
-app.use('/collections', collectionsRouter)
-//app.use('/flashcards', flashcardsRouter)
+app.use('/collection', collectionsRouter)
+//app.use('/flashcard', flashcardsRouter)
 app.use('/admin', adminRouter)
 
 app.listen(PORT, () => {
