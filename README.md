@@ -35,6 +35,26 @@ To run this project, you will need to add the following environment variables to
 
 To generate a valid variable, you can use [JWT Secret Key Generator](https://jwtsecrets.com/)
 
+## Set up database
+
+Create the database
+
+```bash
+  npm run db:push
+```
+
+Seed the database with default data
+
+```bash
+  npm run db:seed
+```
+
+Open the browser client for the database
+
+```bash
+  npm run db:studio
+```
+
 ## Deployment
 
 To deploy this project run
